@@ -1,0 +1,109 @@
+---
+title: "How and why do we measure variation"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(mosaic)
+set.seed(123)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## How do we measure variation?
+
+### Introduction
+Simply measuring the mean of a set of data does not give you any indication about
+the **spread** of values in the data. There are a number of ways in which varibility
+in the measurements can be calculated, and sometimes used to determine whether your
+explanatory variables are affecting your response variables. We will focus on
+several measures in this tutorial:
+
+* sample mean
+* sums of squares
+* variance
+* standard deviation
+* standard error
+* 95% confidence intervals
+
+### Why do I need to know this?
+You can drive a car without having to know exactly what a differential is doing,
+what is a carburettor is for, or why the engine has a crankshaft. However, if you
+have a basic understanding of its mechanics you'll find it easier to diagnose
+faults _What is causing that squeaking from the rear axle?_, and avoid expensive
+errors _Is it OK to put diesel in a petrol engine?_
+
+![Which fuel should I use?](www/fuel_types.jpg)
+
+The same applies to you as a quantitative biologist. You can't treat your models
+as a mysterious black box into which you chuck data and some magic numbers are
+returned. You need a basic understanding of how the models work and why, and this
+will help you diagnose if anything goes wrong.
+
+Don't worry, we'll keep the mathematics to a minimum, and use graphical and
+interactive components where possible.
+  
+
+
+
+<!-- *Here's a simple exercise with an empty code chunk provided for entering the answer.* -->
+
+<!-- Write the R code required to add two plus two: -->
+
+<!-- ```{r two-plus-two, exercise=TRUE} -->
+
+<!-- ``` -->
+
+<!-- ### Exercise with Code -->
+
+<!-- *Here's an exercise with some prepopulated code as well as `exercise.lines = 5` to provide a bit more initial room to work.* -->
+
+<!-- Now write a function that adds any two numbers and then call it: -->
+
+<!-- ```{r add-function, exercise=TRUE, exercise.lines = 5} -->
+<!-- add <- function() { -->
+
+<!-- } -->
+<!-- ``` -->
+
+<!-- ## Topic 2 -->
+
+<!-- ### Exercise with Hint -->
+
+<!-- *Here's an exercise where the chunk is pre-evaulated via the `exercise.eval` option (so the user can see the default output we'd like them to customize). We also add a "hint" to the correct solution via the chunk immediate below labeled `print-limit-hint`.* -->
+
+<!-- Modify the following code to limit the number of rows printed to 5: -->
+
+<!-- ```{r print-limit, exercise=TRUE, exercise.eval=TRUE} -->
+<!-- mtcars -->
+<!-- ``` -->
+
+<!-- ```{r print-limit-hint} -->
+<!-- head(mtcars) -->
+<!-- ``` -->
+
+<!-- ### Quiz -->
+
+<!-- *You can include any number of single or multiple choice questions as a quiz. Use the `question` function to define a question and the `quiz` function for grouping multiple questions together.* -->
+
+<!-- Some questions to verify that you understand the purposes of various base and recommended R packages: -->
+
+<!-- ```{r quiz} -->
+<!-- quiz( -->
+<!--   question("Which package contains functions for installing other R packages?", -->
+<!--     answer("base"), -->
+<!--     answer("tools"), -->
+<!--     answer("utils", correct = TRUE), -->
+<!--     answer("codetools") -->
+<!--   ), -->
+<!--   question("Which of the R packages listed below are used to create plots?", -->
+<!--     answer("lattice", correct = TRUE), -->
+<!--     answer("tools"), -->
+<!--     answer("stats"), -->
+<!--     answer("grid", correct = TRUE) -->
+<!--   ) -->
+<!-- ) -->
+<!-- ``` -->
+
