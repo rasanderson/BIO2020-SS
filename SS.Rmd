@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-## How do we measure variation?
+## Why do we measure variation?
 
 ### Introduction
 Simply measuring the mean of a set of data does not give you any indication about
@@ -46,64 +46,78 @@ Don't worry, we'll keep the mathematics to a minimum, and use graphical and
 interactive components where possible.
   
 
+## Measures of central tendency
+
+### What is 'central tendency'?
+We are so familiar with some concepts, such as averages, that it is easy to
+forget the biases implicit within the way in which they are calculate. For example,
+if you listen to any politicians speaking, they will always talk about "the average
+salary" that people are earning. This is not, however, the measure used by the
+_Office for National Statistics_ (ONS) who actually collect the data. The latter
+always prefer to use the "median salary". There is actually a big difference
+between the two (about £5000 per year on current figures). The median salary is
+what most people earn. The average salary is "distorted" by a relatively small
+number of people earning incredibly high salaries (heads of FTSE100 companies 
+etc.) and so doesn't represent what most people earn.
+
+### Mean
+This is the most commonly use measure of central tendency, i.e. take the sum of
+all the values, and divide by the number of values. So that you are familiar with
+algebraic notation, let's include the formula for a mean here, even though you
+know how to calculate it:
+
+$$\overline{x} = \frac{1}{n}\sum_{i = 1}^{n}x_i$$
+Ehh?? How can calculating something as simple as an average look so horrific!!
+Bear with me, because once you understand this equation, all the others fall
+neatly into place.
+
+* $\overline{x}$ = this is the mean, usually represented with a horizontal line above the symbol
+* $n$ = the number of items of data
+* $i$ = a counter. If you had five items of data ($n=5$), your counter $i$ will be 1, 2, 3, 4, 5
+* $x_i$ = the value for each data point. So if you had five items of data, 6, 2, 1, 0, 8 
+these would be $x_1 = 6$, $x_2 = 2$, $x_3 = 1$, $x_4 = 0$ and $x_5 = 8$
+* $\sum$ = the Greek letter _sigma_ to indicate take the sum of a set of values
+The subscript $i=1$ and superscript $n$ indicate to calculate the sum from your
+first value where $i=1$ (the number 6 here) through every value up to your $n^{th}$
+value (the fifth number, 8 in this example). Here $n = 5$ 
+* $\frac{1}{n}$ = the reciprocal of $n$. Multiplying by the reciprocal of $n$ is
+the same as dividing by $n$
+
+To calculate a mean in R use the `mean()` function. If you want the mean broken
+down by different categories of an explanatory variable, you can use the
+syntax:
+
+`mean(responsevar ~ categorical_explanatory, data=datasetname)`
+
+**Need to add a simple exercise here**
+
+### Median
+The median is the value where 50% of your dataset is above the median, and
+50% is below the median. It can be calculated using the `median()` function in R
+with a similar syntax to above. If your data are normally distributed (bell-shaped
+curve) the mean and median will be fairly similar:
+
+```{r similar_mean_median}
+ # generate 500 values at random with mean of 58
+normal_distribution <- rnorm(500, mean=58)
+gf_histogram(~ normal_distribution)
+```
+
+Mean = `r round(mean(normal_distribution), 2)`
+Median = `r round(median(normal_distribution), 2)`
+
+However, if the data are skewed, then the mean and median drift apart:
+
+```{r dissimilar_mean_median}
+# generate 500 values from a non-normal distribution
+non_normal_distribution <- rlnorm(500, meanlog=log(58))
+gf_histogram(~ non_normal_distribution)
+```
+
+Mean = `r round(mean(non_normal_distribution), 2)`
+Median = `r round(median(non_normal_distribution), 2)`
 
 
-<!-- *Here's a simple exercise with an empty code chunk provided for entering the answer.* -->
-
-<!-- Write the R code required to add two plus two: -->
-
-<!-- ```{r two-plus-two, exercise=TRUE} -->
-
-<!-- ``` -->
-
-<!-- ### Exercise with Code -->
-
-<!-- *Here's an exercise with some prepopulated code as well as `exercise.lines = 5` to provide a bit more initial room to work.* -->
-
-<!-- Now write a function that adds any two numbers and then call it: -->
-
-<!-- ```{r add-function, exercise=TRUE, exercise.lines = 5} -->
-<!-- add <- function() { -->
-
-<!-- } -->
-<!-- ``` -->
-
-<!-- ## Topic 2 -->
-
-<!-- ### Exercise with Hint -->
-
-<!-- *Here's an exercise where the chunk is pre-evaulated via the `exercise.eval` option (so the user can see the default output we'd like them to customize). We also add a "hint" to the correct solution via the chunk immediate below labeled `print-limit-hint`.* -->
-
-<!-- Modify the following code to limit the number of rows printed to 5: -->
-
-<!-- ```{r print-limit, exercise=TRUE, exercise.eval=TRUE} -->
-<!-- mtcars -->
-<!-- ``` -->
-
-<!-- ```{r print-limit-hint} -->
-<!-- head(mtcars) -->
-<!-- ``` -->
-
-<!-- ### Quiz -->
-
-<!-- *You can include any number of single or multiple choice questions as a quiz. Use the `question` function to define a question and the `quiz` function for grouping multiple questions together.* -->
-
-<!-- Some questions to verify that you understand the purposes of various base and recommended R packages: -->
-
-<!-- ```{r quiz} -->
-<!-- quiz( -->
-<!--   question("Which package contains functions for installing other R packages?", -->
-<!--     answer("base"), -->
-<!--     answer("tools"), -->
-<!--     answer("utils", correct = TRUE), -->
-<!--     answer("codetools") -->
-<!--   ), -->
-<!--   question("Which of the R packages listed below are used to create plots?", -->
-<!--     answer("lattice", correct = TRUE), -->
-<!--     answer("tools"), -->
-<!--     answer("stats"), -->
-<!--     answer("grid", correct = TRUE) -->
-<!--   ) -->
-<!-- ) -->
-<!-- ``` -->
-
+Notice how in the skewed distribution, the median value gives a much more
+representative indication of the 'central tendancy' than the mean, which was
+distorted by a few very high values.
