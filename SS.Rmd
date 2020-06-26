@@ -189,3 +189,56 @@ question("What do you think is the best way to measure the variability around th
          random_answer_order = TRUE)
 ```
 
+
+## The SS
+Fortunately, in the context of quantitative biology, the SS stands for **sum of
+squares** and has no unfortunate historical conotations. Simply be multiplying
+each difference by itself before adding them together, you can calculate a 
+measure of the variability. We can represent this algebraically as:
+
+$$SS = \sum_{i = 1}^{n}(\overline{x}-x_i)^2$$
+where
+
+* $SS$ = sum of squares
+* $\overline{x}$ = mean of your set of values, 22.17 on previous screen.
+* $x_i$ = the value for each data point. We have 12 data points, $x_1 = 22.04$,
+$x_2 = 26.28$, $x_3 = 18.82$, ..., $x_{12} = 25.13$
+* $\sum$ =  Greek letter _sigma_ to indicate take the sum the squared differences
+
+Note that the $\overline{x}-x_i$ part of the equation is inside brackets, before
+squaring the results $(\overline{x}-x_i)^2$. This ensures that the difference is
+calculated first, and then it is squared. If it had been written $\overline{x}-x_i^2$
+you would obtain the wrong answer, as the observation value would have been squared
+first, before being subtracted from the mean.
+
+You can easily calculate the SS for a set of numbers in R. It is very unlikely
+that you will ever have to do this, but some of your analysis outputs may include
+a column headed 'SS' so it is useful to know what is going on. Using the twelve
+numbers we had earlier, have a go at calculating the SS. There are 4 hints to
+help you, the final one containing the solution, but try to have a go at working
+it out yourself:
+
+```{r calc_SS, exercise = TRUE, code.completion = FALSE}
+x <- c(22.04, 26.28, 18.82, 20.51, 21.17, 19.26, 23.68, 22.17, 23.31, 24.21, 19.45, 25.13)
+
+```
+
+```{r calc_SS-hint-1}
+# Subtract each observation from the mean
+mean(x) - x
+```
+
+```{r calc_SS-hint-2}
+# Remember to add brackets before squaring the differences
+(mean(x) - x)
+```
+
+```{r calc_SS-hint-3}
+# Use the ^2 to square the differences
+(mean(x) - x)^2
+```
+
+```{r calc_SS-hint-4}
+# Finally use the sum() function, requiring a second set of brackets
+sum((mean(x) - x)^2)
+```
