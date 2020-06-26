@@ -117,7 +117,75 @@ gf_histogram(~ non_normal_distribution)
 Mean = `r round(mean(non_normal_distribution), 2)`
 Median = `r round(median(non_normal_distribution), 2)`
 
-
 Notice how in the skewed distribution, the median value gives a much more
 representative indication of the 'central tendancy' than the mean, which was
 distorted by a few very high values.
+
+## Variability around the mean
+Lets look at a set of data and think about how you might measure the variability
+around the mean. Remember that in practice you often don't know what is causing
+this variability in your data, but you still want to quantify it. Suppose you 
+have the following 12 numbers from an experiment. This could all be from the
+same treatment for example:
+
+* 22.04 26.28 18.82 20.51 21.17 19.26 23.68 22.17 23.31 24.21 19.45 25.13
+
+You can easily store these in an R object called `x` using the `c()` function
+which _concatenates_ them all into a single object. Remember that just typing
+the name of an R object will return its contents. Calculate the mean, median,
+minumum and maximum values, and display a frequency histogram using the
+`gf_histogram()` function:
+
+```{r twelve_numbers, exercise = TRUE, code.completion = FALSE}
+x <- c(22.04, 26.28, 18.82, 20.51, 21.17, 19.26, 23.68, 22.17, 23.31, 24.21, 19.45, 25.13)
+
+```
+```{r twelve_numbers-solution}
+x # Display the contents of R object
+mean(x)
+median(x)
+min(x)
+max(x)
+gf_histogram( ~ x)
+```
+
+You can see that the mean value is 22.17, so what is the best
+way of measuring the variability around this mean? Before answering that
+question, it is helpful to plot the data, from the first observation to twelveth
+observation (numbers 1 to 12) along the x-axis, with the actual values for each
+observation on the y-axis. We use a dotted horizontal line to show the overall
+mean, and vertical lines above and below this to show how each observation 
+varies.
+
+```{r twelve_mean_and_deviations}
+x <- c(22.04, 26.28, 18.82, 20.51, 21.17, 19.26, 23.68, 22.17, 23.31, 24.21, 19.45, 25.13)
+tmp <- data.frame(cbind(xobsno=1:12, xobsval=x))
+ggplot(aes(x=xobsno, y=xobsval), data=tmp) +
+  geom_point() +
+  geom_hline(yintercept = mean(tmp$xobsval), linetype = "dashed") +
+  geom_segment(aes(x=xobsno, y=xobsval), xend = tmp$xobsno, yend = mean(tmp$xobsval)) +
+  scale_x_continuous(breaks = 1:12) +
+  xlab("Observation number from 1 to 12") +
+  ylab("Recorded value for each observation") +
+  theme_classic()
+```
+
+You can see that the 1st and 8th observations are very close to the overall
+mean, whereas the 2nd, 6th, 11th and 12th observations are quite far from the
+overall mean. Looking at this graph, think about the following question:
+
+```{r how_to_measure_variation}
+question("What do you think is the best way to measure the variability around this mean?",
+         answer("Total of square roots of differences between mean and observed values",
+                message = "Some of your differences are negative, and you cannot take
+                the square root of a negative number"),
+         answer("Total of differences between mean and observed values", message = "The
+                differences from the mean are positive and negative. If you add up
+                all these values you will obtain the answer zero"),
+         answer("Total of squares of differences between mean and observed values",
+                message = "Good. By squaring the differences before adding them
+                together you remove the negative values (e.g. -3 x -3 = +9)", correct = TRUE),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
