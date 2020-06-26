@@ -8,6 +8,8 @@ runtime: shiny_prerendered
 library(learnr)
 library(mosaic)
 set.seed(123)
+caterpillers <- read.csv("www/regression.csv")
+crop_growth <- read.csv("www/crop_growth.csv")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -385,4 +387,109 @@ question("Why do you think SS was bigger with 30 than 12 observations?",
 
 ## Variance: correcting SS for the number of records
 
-Our problem with a simple measure of spread in your data ar
+Our problem with using SS to try and quantify the 'spread' or 'variability' in
+your data is that as the size of your dataset gets bigger, the SS gets bigger.
+So even though your dataset with 30 records was less noisy than the one with 12
+observations, by simply taking the total of the squared differences from the 
+mean, we over-estimated the variation in the 30 observation dataset.
+
+We need therefore, some way of calculating a value that measures 'average' or
+'mean' sum of squares. This value was originally known as the **mean sum of squares**
+or **mean square** and you will sometimes see the letters **MS** in the outputs
+from a linear model or other analysis. However, it is more commonly known as
+the **variance** and often written with the Greek letter sigma-squared $\sigma^2$
+or as $s^2$.
+
+### How should you calculate the variance?
+The most obvious answer is simply to divide your SS by $n$ the number of
+observations in your dataset. However, at this point you hit a minor, but quite
+subtle problem. To calculate your SS, in the first step you took each observation
+and subtracted it from $\overline{x}$ the overall mean. Once you start making
+calculations based on other parameters that you have already estimated, in this
+case a mean based on a **sample** of the real whole 'population' of possible
+datasets that might have been collected, you start to limit what you can do.
+
+This is easiest to explain with a trivial example. Imagine you have 5 observations,
+the mean is 30.0, and the first four observations are:
+
+* 24 , 48, 41, 18
+
+what is the value of the fifth observation? You actually have **no choice** in
+what the fifth observation can be. It has to be **19** in order for the average
+to be 30.0  In other words, if you have 5 data points to calculate your (known)
+mean, you have complete freedom as to what any four of those data points are,
+but no choice as to the final one. The same issue applies irrespective of how
+many observations are used to calculate your mean. For the 12 observation 
+dataset, if you have **already calculated the mean** there is complete flexibility
+on the values of 11 observations, but not the twelth. Similarly for the 30
+observation dataset. So here we have flexibility of choice on $n - 1$ observations.
+This concept is known as **degrees of freedom** (df).
+
+**Key point** In general the number of degrees of freedom will be one less than
+the number of parameters being estimated.
+
+### Recap: degrees of freedom in linear model output
+We did not discuss it in detail at the time, but recall from the linear models
+with continuous and categorical explanatory variables that degrees of freedom
+appeared in model outputs:
+
+* Caterpiller growth example. This had 9 rows of data, and the `summary()` function
+reported `1 and 7 degrees of freedom`
+* Crop yield and soil example. This had 30 rows of data (10 for each of 3 soil
+types) and the `anova()` function reported `2 and 27 degrees of freedom`.
+
+Where are these numbers coming from for the degrees of freedom?
+
+#### Caterpiller example
+
+* The linear model calculated two parameters (intercept and slope) so $df = 2
+- 1 = 1` for the model.
+* The remaining ('residual') degrees of freedom is the number of observations
+minus the model ('regression') df - minus one overall. We have 9 observations so
+$df = 9 - 1 - 1 = 7$.
+
+### Yield and soil type example
+
+* The linear model calculated 3 parameters (the means for each soil type), so
+the model df is $df = 3 - 1 = 2$
+* The remaining degrees of freedom is the number of observations minus that from
+the model minus one overall. We have 30 observations, hence $df = 30 - 2 - 1 = 27$
+
+## Calculating the variance (SS corrected for number of observations)
+Hopefully it is now clear to you that as we have already calculated a mean
+$\overline{x}$ we need to correct our SS by dividing by $n - 1$ rather than $n$.
+So the actual formula for variance, often shown as $\sigma^2$ or $\s^2$ is:
+
+$$variance = s^2 = \sigma^2 = \frac{Sum\textrm{ }of\textrm{ }Squares}{degrees\textrm{ }of\textrm{ }freedom}$$
+which is the same as multiplying the SS by the reciprocal of the degrees of
+freedom (look back at the equation on how to calculate a mean):
+
+$$variance = s^2 = \sigma^2 = \frac{1}{n - 1}\sum_{i = 1}^{n}(\overline{x}-x_i)^2$$
+Variance can be calcuated in R using the `var()` function. If you want the 
+variance for just one column of a dataset, use the syntax:
+
+`var( ~ variable_name, data=dataset_name)` or
+`var( variable_name ~ NULL, data=dataset_name)` 
+
+If you want to calculate it separately for each level of a **categorical**
+explanatory variable, you can use the syntax
+
+`var(response_variable ~ explanatory_variable, data=dataset_name)`
+
+Have a go at calculating the variance for some of your data from the `caterpillers`
+and `crop_growth` datasets:
+
+```{r calc_variance, exercise = TRUE, code.completion = FALSE, exercise.lines = 10}
+
+
+```
+```{r calc_variance-solution}
+# Overall variance for each column of caterpillers
+var(~ tannin, data=caterpillers)
+var(~ growth, data=caterpillers)
+# Overall variance for crop yield
+var( ~ yield, data = crop_growth)
+# Variance for each soil type
+var(yield ~ soil, data = crop_growth)
+```
+
