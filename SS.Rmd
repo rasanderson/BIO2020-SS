@@ -242,3 +242,147 @@ mean(x) - x
 # Finally use the sum() function, requiring a second set of brackets
 sum((mean(x) - x)^2)
 ```
+
+## Problems with SS
+Although SS is used in analyses, it is still not good enough to present in for
+example a summary of your results. There are two  problems. The first relates
+to the number of observations (e.g. replicates), and the second the units of
+measurement.
+
+Look at the following two graphs. The one on the left gives the data with 12
+observations that you have already studied. The one on the right gives a larger
+set of data with 30 observations.  Two key points are obvious:
+
+* The means are similar for both sets of data
+* There is less variability around the mean for the dataset on the right
+
+```{r twelve_and_thirty_mean_and_deviations, warning = FALSE}
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
+
+x1 <- c(22.04, 26.28, 18.82, 20.51, 21.17, 19.26, 23.68, 22.17, 23.31, 24.21, 19.45, 25.13)
+x2 <- c(27.11, 20.83, 21.17, 19.82, 22.47, 22.54, 23.62, 22.31, 22.92, 23.55, 20.26, 23.53,
+        21.91, 23.51, 24.56, 21.57, 23.71, 23.57, 21.73, 20.21, 21.59, 22.47, 22.04, 21.27,
+        19.70, 24.10, 19.92, 20.19, 23.56, 21.06)
+x1_df <- data.frame(cbind(x1obsno=1:12, x1obsval=x1))
+x2_df <- data.frame(cbind(x2obsno=1:30, x2obsval=x2))
+p1 <- ggplot(aes(x=x1obsno, y=x1obsval), data=x1_df) +
+  geom_point() +
+  geom_hline(yintercept = mean(x1_df$x1obsval), linetype = "dashed") +
+  geom_segment(aes(x=x1obsno, y=x1obsval), xend = x1_df$x1obsno, yend = mean(x1_df$x1obsval)) +
+  scale_x_continuous(breaks = 1:12) +
+  scale_y_continuous(limits = c(18, 27), breaks = 18:27) +
+  xlab("Observation number from 1 to 12") +
+  ylab("Recorded value for each observation") +
+  theme_classic()
+p2 <- ggplot(aes(x=x2obsno, y=x2obsval), data=x2_df) +
+  geom_point() +
+  geom_hline(yintercept = mean(x2_df$x2obsval), linetype = "dashed") +
+  geom_segment(aes(x=x2obsno, y=x2obsval), xend = x2_df$x2obsno, yend = mean(x2_df$x2obsval)) +
+  scale_x_continuous(breaks = 1:30) +
+  scale_y_continuous(limits = c(18, 27), breaks = 18:27) +
+  xlab("Observation number from 1 to 30") +
+  ylab("Recorded value for each observation") +
+  theme_classic()
+
+multiplot(p1, p2, cols = 2)
+```
+
+Now go ahead and check the means, medians, minimum, maximum and SS for the two 
+datasets, and see how they compare. We'll call your original dataset of 12 values
+`x1`, and the larger dataset of 30 values `x2`:
+
+```{r compare_two_SS, exercise = TRUE, code.completion = FALSE, exercise.lines = 15}
+x1 <- c(22.04, 26.28, 18.82, 20.51, 21.17, 19.26, 23.68, 22.17, 23.31, 24.21, 19.45, 25.13)
+x2 <- c(25.11, 20.83, 21.17, 19.82, 22.47, 22.54, 23.62, 22.31, 22.92, 23.55, 20.26, 23.53,
+        21.91, 23.51, 24.56, 21.57, 23.71, 23.57, 21.73, 20.21, 21.59, 22.47, 22.04, 21.27,
+        19.70, 24.10, 19.92, 20.19, 23.56, 21.06)
+
+```
+```{r compare_two_SS-solution}
+mean(x1)
+mean(x2)
+median(x1)
+median(x2)
+min(x1)
+max(x1)
+min(x2)
+max(x2)
+sum((mean(x1) - x1)^2)
+sum((mean(x2) - x2)^2)
+```
+
+There is obviously a problem using SS to measure variability. The SS is 62 for
+the dataset with 12 values, but over 66 for the dataset with 30 values. Even
+though the dataset with 30 values has **less variability**, when judged by simple
+visual assessment or maximum and minimum values, the **SS is actually larger** for
+the bigger dataset.  Why do you think this problem has arisen?
+
+```{r why_is_SS_not_sufficient}
+question("Why do you think SS was bigger with 30 than 12 observations?",
+         answer("There really is more noise and variability around the mean in the 30
+                observation dataset", message = "No, there is less variation on
+                average. The problem is that we measured the total variation,
+                rather than taking an average of the variation"),
+         answer("We need to correct the SS for the number of observations", correct = 
+                TRUE, message = "Good. We need to divide the SS by a variable
+                indicative of the number of observations, to obtain the mean SS"),
+         answer("SS involes taking a square of the data. This distorts the result",
+                message = "No, squaring the differences is not the problem here,
+                although you are right that we will need to adjust for it at
+                some stage. Here the problem is that we need to take an average
+                of the SS, correcting for the number of observations"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
+
+
+## Variance: correcting SS for the number of records
+
+Our problem with a simple measure of spread in your data ar
