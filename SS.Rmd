@@ -493,3 +493,120 @@ var( ~ yield, data = crop_growth)
 var(yield ~ soil, data = crop_growth)
 ```
 
+You will see variances displayed in the outputs of many linear models and we will
+discuss how variance, often shown as **_MS_** for "mean sums of square" is used
+to test the importance of predictors in another Canva link **add link**.
+
+However, there is still a problem with using variance as a general way to 
+describe the spread of your data. Can you see what it might be.
+
+```{r what_is_wrong_with_variance}
+question("What is the main problem in using variance to describe the spread of data around the mean?",
+         answer("It does not take into account the full range of data values",
+                message = "No, it uses all your data observations"),
+         answer("It is not as accurate as just using the maximum and minimum values",
+                message = "No, it is a better measure than the maximum and minimum values"),
+         answer("It does not have sensible units of measurement",
+                message = "Good. In the calculation of SS you squared the original
+                units. So if your original units were kg, they are now kg-squared.
+                These units are probably not biologically sensible", correct = TRUE),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
+## Standard deviation: correct units
+Whilst variance is useful, the main problem is that as a result of squaring all
+the original deviations above and below the mean to calculate the sums of squares
+the units of variance are themselves squared. So, you have now gone from $g$ to
+$g^2$ or $\mu g$ to $\mu g^2$ which probably does not make any sense. The
+correction you need to apply is simply to take the square root of the variance,
+to calculate the **standard deviation**. This if often to $sd$, $s$ or $\sigma$
+
+$$sd = s = \sigma = \sqrt{s^2} = \sqrt{\sigma^2} = \sqrt{\frac{1}{n - 1}\sum_{i = 1}^{n}(\overline{x}-x_i)^2}$$
+
+This equation may look a little fierce, but hopefully you can see how we have
+simply taken the square root of our equation for variance. Recall from earlier
+that variance is often written as $s^2$ or $\sigma^2$ 
+
+**Phew - problem of measuring the spread now solved?** Not so fast. There is still
+a quite subtle problem that we need to address, which comes down to **how**
+**reproducible is your research?** If another scientist were to repeat your
+experiment, how likely are they to reach the same conclusions as you did? This
+depends to a large extent on the **accuracy** and **precision** of your measurements.
+
+## Accuracy and precision
+You will sometimes see these terms referred to as **bias** and **variance* 
+tradeoff. Imagine you are playing with bows and arrows, or on a dartboard.
+Ideally you want every one of your shots to hit exactly on target.
+
+![If only I was this brilliant a player...](www/dart_board.jpg)
+
+Imagine that the "bulls-eye" on the dartboard is the "real" value that you want
+to measure, for example:
+
+* tree diameter at breast height
+* actual length of DNA sequence
+* the bird diversity in a woodland
+
+Of course, no matter how hard you try, there will be variation, for example:
+
+* when measuring tree diameter at breast height you don't always hold the tape 
+measure exactly horizontal
+* when using your MinION sequencer, some DNA reads are not returned at random
+* you don't manage to see every species of bird on your visit to the woodland
+
+Some of your darts might even miss the dart board altogether, which is rather
+like having missing data. This could lead you to have more observations for some
+treatments than others. How do we take this into account? Using the dart board
+analogy, we can think of four possible extremes:
+
+![Accuracy and precision](www/accuracy_precision.png)
+
+So ideally we'd like all our observations in the top left, i.e. on target and
+with very little spread around the average value. We certainly want to avoid
+inaccurate measurements - systematic errors might occur if, to take our examples
+from above:
+
+* your tape measure had stretched so you always underestimated tree diameter at
+breast height
+* your MinION device was contaminated, so additional DNA reads occurred in
+every sample
+* you did not know how to distinguish between great tits and blue tits, so
+always mis-counted the number of bird species in your woodland.
+
+Looking at the two dartboards in the left column above, they are both accurate,
+in that their means are approximately on their true value. However, one at the
+bottom left is very imprecise.
+
+### False measures of precision
+It is very easy to mislead your reader into how precisely you have measured
+your data. Look closely at the following picture of an inexpensive laboratory
+balance. You are going to use it to weigh some soil samples, and calculate
+the mean soil sample weight. Calculate the mean sample weight, and answer
+the question below. There are six samples, and the data are below.
+
+![Laboratory digital scales](www/scales.jpg)
+
+```{r mean_soil, exercise = TRUE, code.completion = FALSE}
+soil_samples <- c(3.51, 3.82, 3.12, 3.97, 2.97, 3.66)
+
+```
+
+```{r what_soil_mean}
+question("What the mean soil weight?",
+         answer("3.508333",
+                message = "No, the balance is only to 2 decimal places"),
+         answer("3.5",
+                message = "No, the value 3.508 should be rounded to nearest
+                2 decimal places 3.51, as the balance is accurate to 2 decimals"),
+         answer("3.51",
+                message = "Good. The balance is only accurate to 2 decimal places
+                and you round up the 3rd decimal if it is 5 or above (8 here).", 
+                correct = TRUE),
+         answer("3.50",
+                message = "Round up to the nearest appropriate decimal. You are
+                right that it should be 2 decimal places, but if the 3rd decimal
+                is 5 or above (8 here) round up."),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
