@@ -598,7 +598,7 @@ question("What the mean soil weight?",
                 message = "No, the balance is only to 2 decimal places"),
          answer("3.5",
                 message = "No, the value 3.508 should be rounded to nearest
-                2 decimal places 3.51, as the balance is accurate to 2 decimals"),
+                2 decimal places 3.51, as the balance is only accurate to 2 decimals"),
          answer("3.51",
                 message = "Good. The balance is only accurate to 2 decimal places
                 and you round up the 3rd decimal if it is 5 or above (8 here).", 
@@ -610,3 +610,71 @@ question("What the mean soil weight?",
          allow_retry = TRUE,
          random_answer_order = TRUE)
 ```
+
+## How to measure accuracy and precision
+You have already used standard deviation ($\sigma$), and the other closely 
+related variable is standard error (se or SE). This can be calculated as:
+
+$$se = \frac{\sigma}{\sqrt{n}}$$
+
+Obviously, standard error is smaller than standard deviation, as you divide by
+the square root of $n$, but they relate to our dartboard example earlier:
+
+* standard deviation provides a measure of how far away you are from the "true"
+value, represented by the bull's eye on the dartboard. So it is a measure of
+**precision**
+* standard error provides a measure of the **accuracy** of you measurement, or
+how much spread there is in the darts you threw at the dartboard.
+
+Both measures get smaller with increasing sample size $n$.
+
+### How to calculate standard error in R
+Oddly enough, there isn't a built-in function to calculate SE, presumably
+because the calculation is fairly trivial. In the exercise below, first calculate
+the standard deviation, and then the standard error, for the numbers in `x`, as
+well as the mean. There are 7 numbers, but see if you can calculate the se 
+without actually putting `7` into your code.
+
+```{r calc_se, exercise = TRUE, code.completion = FALSE}
+x <- c(4.521, 2.832, 9.185, 7.324, 5.461, 6.108, 8.911)
+
+```
+```{r calc_se-solution}
+# Overall variance for each column of caterpillers
+# Mean
+mean(x)
+# Standard deviation
+sd(x)
+# Standard error. Use length() to work out number of items of data that you
+# might be working with. You can also use tally() or nrow() if you have tables
+# (data.frames) of data.
+sd(x)/sqrt(length(x))
+```
+
+### How to describe SE in your reports
+
+What you have just calculated is actually a standard error of the mean (SEM).
+You can calculate SE for differences between variables, slopes, intercepts 
+etc. and you will often see them displayed in outputs from analyses. When
+writing reports, people sometimes use standard deviations, and sometimes
+standard errors, although in general it is better to use SE. Write it in this
+sort of way:
+  
+* The treatment had a mean weight of 6.335 $\pm$ 0.874 SE.
+  
+This makes it clear that you are talking about SE, and not SD, and the $\pm$
+symbol indicates variation above $+$ or below $-$ the mean.
+
+### An aside in case you a curious
+Hopefully you understand that SE simply takes account of the number of 
+observations in your sample. Bigger samples are likely to be more accurate,
+so we divided by $\sqrt{n}$
+  
+However, you might be wondering, "Why divide by $\sqrt{n}$ rather than by $n$?"
+The reason is quite subtle, but in essence, as you increase your sample size
+the change in the estimated standard error (y-axis) if plotted against sample
+size $n$ (x-axis) forms a curve. This can be changed to a straight line if $n^{0.5}$
+You might recall from school maths classes that when you raise something to
+the power of 0.5, it is the same as taking the square root. There is a nice
+simple worked example of this [here](https://www.drdawnwright.com/why-divide-by-the-square-root-of-n/)
+
