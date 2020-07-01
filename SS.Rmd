@@ -123,6 +123,192 @@ Notice how in the skewed distribution, the median value gives a much more
 representative indication of the 'central tendancy' than the mean, which was
 distorted by a few very high values.
 
+## Sensitivity to outliers
+An **outlier** data point is a very extreme value. These can arise if you have
+mis-read a measuring device in the field or laboratory. A common source of outlier
+values is if you are typing in data from a notebook into a spreadsheet, and you
+make a typo, for example entering **103** when you meant to enter **10.3**. How
+important are these outliers? Use the interactive below to adjust the number of
+observations you have collected, and the size of your outlier value. The mean
+value is shown in black, and the median a red horizontal line. Then answer the
+questions after the interactive.
+
+```{r, echo=FALSE}
+# Define UI for application that draws a histogram
+fluidPage(
+    titlePanel("Stability of Mean & Median"),
+    sidebarPanel(
+        sliderInput("outlier", "Value of outlier", 60, 90, 60, step = 1 ),
+        sliderInput("number", "Number of sample points", 3, 30, 10, step = 1 ),
+   ),
+    mainPanel(
+        fluidRow(
+            column(6,
+                   wellPanel(
+                       h3("Without outlier"),
+                       plotOutput("plot1"),
+                         h4("mean"),
+                       textOutput("mean1"),
+                       h4("median"),
+                       textOutput("median1"))),
+            column(6,
+                   wellPanel(
+                       h3("With outlier"),
+                       plotOutput("plot2"),
+                       fluidRow(
+                           column(6,
+                                  h4("mean"),
+                                  div(id="mean",
+                                  textOutput("mean2"))),
+                           column(6,
+                                  h4("Change in mean with outlier"),
+                                  div(id="deviation",
+                                  textOutput("deviation")))
+                       ),
+                       fluidRow(
+                           column(6,
+                                  h4("median"),
+                                  div(id="median",
+                                  textOutput("median2"))),
+                           column(6,
+                                  h4("Change in median with outlier"),
+                                  div(id="deviation2",
+                                  textOutput("deviation2")))
+                       )
+                   )
+            )
+        )
+    )
+)
+
+```
+
+```{r, context="server"}
+    data <- data.frame(x = 1:100, y = rnorm(100,50,3))
+    # define fixed yrange for plot
+    yrange <- range(c(data$y, 90))
+    # format value
+    styler <- function(value) {
+        sprintf("%.2f", value)
+    }
+        
+        # observe changes to number of trials and return subset of data
+        reactiveCalc <- reactive({
+            number     <- input$number
+            outlier.y <- input$outlier
+            isolate({
+                if (is.null(number) || is.null(outlier.y)) {
+                    return(NULL)
+                }
+                
+                # get subset of sample points
+                df  <- subset(data, x <= number)
+                m   <- mean(df$y)
+                mdn <- median(df$y)
+                
+                # include outlier to special data.frame and compute descriptive statistics
+                outlier.x   <- nrow(df) + 1
+                df.outlier  <- data.frame(x=c(df$x, outlier.x), y=c(df$y, outlier.y)) 
+                m.outlier   <- mean(df.outlier$y)
+                mdn.outlier <- median(df.outlier$y)
+                col.outlier <- "red"
+                
+                # compute deviations
+                m.delta   <- abs(m.outlier   - m)
+                mdn.delta <- abs(mdn.outlier - mdn)
+                
+                return(list(df=df, m=m, mdn=mdn, outlier.x=outlier.x, outlier.y=outlier.y,
+                            df.outlier=df.outlier, m.outlier=m.outlier, mdn.outlier=mdn.outlier,
+                            m.delta = m.delta, mdn.delta = mdn.delta,
+                            col.outlier = col.outlier))
+            })
+        })
+        
+        calcMean <- function(includeoutlier) {
+            df <- reactiveDf()
+            if (is.null(df)) return()
+            if (includeoutlier) {
+                mean(c(df$y,input$outlier))
+            } else {
+                mean(df$y)
+            }
+        }
+        
+        calcMedian <- function(includeoutlier) {
+            df <- reactiveDf()
+            if (is.null(df)) return()
+            if (includeoutlier) {
+                median(c(df$y,input$outlier))
+            } else {
+                median(df$y)
+            }
+        }
+        
+        deviation <- function() {
+            df <- reactiveDf()
+            if (is.null(df)) return()
+            d <- abs(mean(c(df$y,input$outlier)) - mean(df$y))
+            sprintf("+%.02f",d)
+        }
+        
+        deviation2 <- function() {
+            df <- reactiveDf()
+            if (is.null(df)) return()
+            d <- abs(median(c(df$y,input$outlier)) - median(df$y))
+            sprintf("+%.02f",d)
+        }
+
+        output$plot1     <- renderPlot({
+            val <- reactiveCalc()
+            df <- val$df
+            meanval <- val$m
+            medval  <- val$mdn
+            p <- ggplot(df, aes(x=x, y=y)) +
+                geom_point() +
+                geom_hline(yintercept = meanval) +
+                geom_hline(yintercept = medval, linetype = "dashed", colour = "red") +
+                ylim(c(40, 90)) +
+                theme_classic()
+            return(p)
+        })
+        
+        output$plot2     <- renderPlot({
+            val <- reactiveCalc()
+            df <- val$df.outlier
+            meanval <- val$m.outlier
+            medval  <- val$mdn.outlier
+            p <- ggplot(df, aes(x=x, y=y)) +
+                geom_point() +
+                geom_hline(yintercept = meanval) +
+                geom_hline(yintercept = medval, linetype = "dashed", colour = "red") +
+                ylim(c(40, 90)) +
+                theme_classic()
+            return(p)
+        })
+        
+        output$mean1     <- renderText({ val <- reactiveCalc(); if(!is.null(val)) styler(val$m) })
+        output$mean2     <- renderText({ val <- reactiveCalc(); if(!is.null(val)) styler(val$m.outlier) })
+        output$median1   <- renderText({ val <- reactiveCalc(); if(!is.null(val)) styler(val$mdn) })
+        output$median2   <- renderText({ val <- reactiveCalc(); if(!is.null(val)) styler(val$mdn.outlier) })
+        output$deviation <- renderText({ val <- reactiveCalc(); if(!is.null(val)) styler(val$m.delta) })
+        output$deviation2<- renderText({ val <- reactiveCalc(); if(!is.null(val)) styler(val$mdn.delta) })
+
+```
+
+Thinking about what happened as you changed the size of the outlier and the
+number of observations:
+
+```{r outlier_questions}
+question("Which of these is true?",
+         answer("The mean is more robust to outliers than the median"),
+         answer("The median is more robust to outliers", correct = TRUE),
+         answer("The effect of outliers is less when there are lots of observations", correct = TRUE),
+         answer("The effects of outliers is less when there are few observations"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
+
 ## Variability around the mean
 Lets look at a set of data and think about how you might measure the variability
 around the mean. Remember that in practice you often don't know what is causing
