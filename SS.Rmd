@@ -864,3 +864,33 @@ You might recall from school maths classes that when you raise something to
 the power of 0.5, it is the same as taking the square root. There is a nice
 simple worked example of this [here](https://www.drdawnwright.com/why-divide-by-the-square-root-of-n/)
 
+## Confidence intervals
+The final type of measure of variation we will discuss are 95% Confidence
+Intervals, often abbreviated to 95% CI. When you have data from a normal or
+bell-shaped distribution (also known as a Gaussian distribution), roughly
+95% of the data points occur within plus or minus about 2 standard deviations
+from the mean:
+
+```{r norm_dist_with_95}
+gf_dist("norm", params = list(mean=0), fill = ~ (abs(x) <= 1.96), geom = "area") %>%
+  gf_labs(x="Value of variable; mean is zero, SD is 1.0", y="Proportion")
+```
+
+You can see that about 95% of the values are in the shaded area of this
+random normal distribution. It is actually mean +/- 1.96 of the standard
+deviation, although think of it as 2.0 if that is easier to remember.
+
+One advantage of 95% CI is that they can be displayed in a graph, and provide
+a more nuanced interpretation of your data than a simple "significant" or
+"non-significant" approach. 
+
+Use the `confint()` function to calculate 95% CI, for example:
+
+```{r show_95CI, echo=TRUE}
+# Generate some random data
+some_data <- rnorm(n=100, mean=50, sd=1)
+
+# Display 95% around the mean
+confint(some_data)
+```
+
