@@ -808,8 +808,8 @@ the square root of $n$, but they relate to our dartboard example earlier:
 
 * standard deviation provides a measure of how far away you are from the "true"
 value, represented by the bull's eye on the dartboard. So it is a measure of
-**precision**
-* standard error provides a measure of the **accuracy** of you measurement, or
+**accuracy**
+* standard error provides a measure of the **precision** of you measurement, or
 how much spread there is in the darts you threw at the dartboard.
 
 Both measures get smaller with increasing sample size $n$.
