@@ -91,7 +91,6 @@ syntax:
 
 `mean(responsevar ~ categorical_explanatory, data=datasetname)`
 
-**Need to add a simple exercise here**
 
 ### Median
 The median is the value where 50% of your dataset is above the median, and
