@@ -611,40 +611,16 @@ on the values of 11 observations, but not the twelth. Similarly for the 30
 observation dataset. So here we have flexibility of choice on $n - 1$ observations.
 This concept is known as **degrees of freedom** (df).
 
-**Key point** In general the number of degrees of freedom will be one less than
-the number of parameters being estimated.
+### Key points 
 
-### Recap: degrees of freedom in linear model output
-We did not discuss it in detail at the time, but recall from the linear models
-with continuous and categorical explanatory variables that degrees of freedom
-appeared in model outputs:
+* In general the number of degrees of freedom will be $n$ minus the number of parameters being estimated.
+* To correct the sums of squares (SS) for the number of observations, we divide by $n - 1$ rather than $n$ where $n$ is the number of observations, as we have calculated one parameter (the mean) already.
 
-* Caterpiller growth example. This had 9 rows of data, and the `summary()` function
-reported `1 and 7 degrees of freedom`
-* Crop yield and soil example. This had 30 rows of data (10 for each of 3 soil
-types) and the `anova()` function reported `2 and 27 degrees of freedom`.
-
-Where are these numbers coming from for the degrees of freedom?
-
-#### Caterpiller example
-
-* The linear model calculated two parameters (intercept and slope) so $df = 2
-- 1 = 1` for the model.
-* The remaining ('residual') degrees of freedom is the number of observations
-minus the model ('regression') df - minus one overall. We have 9 observations so
-$df = 9 - 1 - 1 = 7$.
-
-### Yield and soil type example
-
-* The linear model calculated 3 parameters (the means for each soil type), so
-the model df is $df = 3 - 1 = 2$
-* The remaining degrees of freedom is the number of observations minus that from
-the model minus one overall. We have 30 observations, hence $df = 30 - 2 - 1 = 27$
 
 ## Calculating the variance (SS corrected for number of observations)
 Hopefully it is now clear to you that as we have already calculated a mean
 $\overline{x}$ we need to correct our SS by dividing by $n - 1$ rather than $n$.
-So the actual formula for variance, often shown as $\sigma^2$ or $\s^2$ is:
+So the actual formula for variance, often shown as $\sigma^2$ or $s^2$ is:
 
 $$variance = s^2 = \sigma^2 = \frac{Sum\textrm{ }of\textrm{ }Squares}{degrees\textrm{ }of\textrm{ }freedom}$$
 which is the same as multiplying the SS by the reciprocal of the degrees of
@@ -721,7 +697,7 @@ experiment, how likely are they to reach the same conclusions as you did? This
 depends to a large extent on the **accuracy** and **precision** of your measurements.
 
 ## Accuracy and precision
-You will sometimes see these terms referred to as **bias** and **variance* 
+You will sometimes see these terms referred to as **bias** and **variance** 
 tradeoff. Imagine you are playing with bows and arrows, or on a dartboard.
 Ideally you want every one of your shots to hit exactly on target.
 
@@ -839,8 +815,7 @@ sd(x)/sqrt(length(x))
 
 ### How to describe SE in your reports
 
-What you have just calculated is actually a standard error of the mean (SEM).
-You can calculate SE for differences between variables, slopes, intercepts 
+What you have just calculated is actually a standard error of the mean (SEM), i.e. a **measure of the precision of your sample mean**. The larger the value of $n$, the better the precision. You can calculate SE for differences between variables, slopes, intercepts 
 etc. and you will often see them displayed in outputs from analyses. When
 writing reports, people sometimes use standard deviations, and sometimes
 standard errors, although in general it is better to use SE. Write it in this
@@ -851,9 +826,9 @@ sort of way:
 This makes it clear that you are talking about SE, and not SD, and the $\pm$
 symbol indicates variation above $+$ or below $-$ the mean.
 
-### An aside in case you a curious
+### An aside in case you are curious
 Hopefully you understand that SE simply takes account of the number of 
-observations in your sample. Bigger samples are likely to be more accurate,
+observations in your sample. Bigger samples are likely to be more precise,
 so we divided by $\sqrt{n}$
   
 However, you might be wondering, "Why divide by $\sqrt{n}$ rather than by $n$?"
