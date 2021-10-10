@@ -654,9 +654,8 @@ var( ~ yield, data = crop_growth)
 var(yield ~ soil, data = crop_growth)
 ```
 
-You will see variances displayed in the outputs of many linear models and we will
-discuss how variance, often shown as **_MS_** for "mean sums of square" is used
-to test the importance of predictors in another Canva link **add link**.
+You will see variances displayed in the outputs of many linear models, often shown as **_MS_** for "mean sums of square",
+to test the importance of predictors.
 
 However, there is still a problem with using variance as a general way to 
 describe the spread of your data. Can you see what it might be.
